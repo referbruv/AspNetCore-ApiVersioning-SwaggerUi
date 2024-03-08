@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SwaggerHeroes.Core.Options;
+using SwaggerHeroes.Core.SwaggerOptions;
 
 namespace SwaggerHeroes.Core
 {
@@ -15,10 +17,10 @@ namespace SwaggerHeroes.Core
         //    }
         //}
 
-        public static IServiceCollection AddCore(this IServiceCollection services)
+        public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration configuration)
         {
             return services.AddVersioning()
-                .AddSwaggerVersioning();
+                .AddSwaggerVersioning(configuration);
         }
 
         private static IServiceCollection AddVersioning(this IServiceCollection services)
@@ -39,12 +41,14 @@ namespace SwaggerHeroes.Core
             return services;
         }
 
-        private static IServiceCollection AddSwaggerVersioning(this IServiceCollection services)
+        private static IServiceCollection AddSwaggerVersioning(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSwaggerGen(options => {
                 // for further customization
                 //options.OperationFilter<DefaultValuesFilter>();
             });
+            
+            services.AddSingleton<ApiSpecificationOptions>(configuration.GetSection(ApiSpecificationOptions.ConfigurationKey).Get<ApiSpecificationOptions>());
             services.ConfigureOptions<ConfigureSwaggerOptions>();
 
             return services;
