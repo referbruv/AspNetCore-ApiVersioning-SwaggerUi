@@ -29,11 +29,44 @@ namespace SwaggerHeroes.Core.Options
             {
                 options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
             }
+
+            // add Token Security mechanism
+            AddBearerSecurityDefinition(options);
         }
 
         public void Configure(string name, SwaggerGenOptions options)
         {
             Configure(options);
+        }
+
+        private void AddBearerSecurityDefinition(SwaggerGenOptions options)
+        {
+            options.AddSecurityDefinition(
+                "Bearer",
+                new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please insert Bearer followed by a valid Token to be passed in the Request Header",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                }
+            );
+            options.AddSecurityRequirement(
+                new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                }
+            );
         }
 
         private OpenApiInfo CreateInfoForApiVersion(ApiVersionDescription description)
