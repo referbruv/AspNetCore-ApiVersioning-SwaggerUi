@@ -8,7 +8,7 @@ using SwaggerHeroes.Core.Data.Services;
 namespace SwaggerHeroes.Api.Controllers.V1
 {
     [ApiController]
-    [ApiVersion("1.0")]
+    [ApiVersion("1.0", Deprecated = true)]
     [Route("api/v{version:apiVersion}/[controller]")]
     // [Route("api/[controller]")] // for backward compatibility
     public class HeroesController : ControllerBase

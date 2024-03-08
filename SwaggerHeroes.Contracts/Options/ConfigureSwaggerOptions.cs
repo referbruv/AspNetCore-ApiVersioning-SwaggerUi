@@ -1,7 +1,9 @@
+using System;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using SwaggerHeroes.Core.SwaggerOptions;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace SwaggerHeroes.Core.Options
@@ -9,10 +11,15 @@ namespace SwaggerHeroes.Core.Options
     public class ConfigureSwaggerOptions : IConfigureNamedOptions<SwaggerGenOptions>
     {
         private readonly IApiVersionDescriptionProvider provider;
+        private readonly ApiSpecificationOptions apiSpecificationOptions;
 
-        public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider)
+        public ConfigureSwaggerOptions(
+            IApiVersionDescriptionProvider provider,
+            ApiSpecificationOptions apiSpecificationOptions
+        )
         {
             this.provider = provider;
+            this.apiSpecificationOptions = apiSpecificationOptions;
         }
 
         public void Configure(SwaggerGenOptions options)
@@ -33,13 +40,19 @@ namespace SwaggerHeroes.Core.Options
         {
             var info = new OpenApiInfo()
             {
-                Title = "SwaggerHeroes API",
-                Version = description.ApiVersion.ToString()
+                Title = apiSpecificationOptions.Title,
+                Version = description.ApiVersion.ToString(),
+                Contact = new OpenApiContact()
+                {
+                    Name = apiSpecificationOptions.Author,
+                    Url = new Uri(apiSpecificationOptions.Website)
+                },
+                Description = apiSpecificationOptions.Description
             };
 
             if (description.IsDeprecated)
             {
-                info.Description += " This API version has been deprecated.";
+                info.Description += " (This API version has been deprecated)";
             }
 
             return info;

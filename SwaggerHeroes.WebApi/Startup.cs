@@ -25,7 +25,7 @@ namespace SwaggerHeroes
             services.AddPersistence(Configuration);
 
             // Add Core 
-            services.AddCore();
+            services.AddCore(Configuration);
 
             services.AddControllers();
         }
